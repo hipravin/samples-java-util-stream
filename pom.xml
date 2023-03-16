@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>file-lines</module>
+        <module>misc-examples</module>
     </modules>
 
     <properties>
@@ -20,6 +21,7 @@
 
         <jmh.version>1.36</jmh.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
+        <guava.version>31.1-jre</guava.version>
     </properties>
 
     <dependencyManagement>
@@ -34,6 +36,13 @@
                 <artifactId>jmh-generator-annprocess</artifactId>
                 <version>${jmh.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
