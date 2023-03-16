@@ -11,6 +11,7 @@
     <modules>
         <module>file-lines</module>
         <module>misc-examples</module>
+        <module>letter-frequency</module>
     </modules>
 
     <properties>
