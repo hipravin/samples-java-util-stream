@@ -28,15 +28,12 @@ public class StreamFlatMapImplTextStatisticAnalyzer implements TextStatisticAnal
     }
 
     private Map<String, Long> letterFrequency(Stream<String> lines, int minWordLength) {
-        Map<String, Long> letterFrequency =
-            lines.flatMap(this::words)
-                    .filter(w -> w.length() >= minWordLength)
-                    .map(String::toLowerCase)
-                    .flatMapToInt(String::chars)
-                    .mapToObj(i -> String.valueOf((char) i))
-                    .collect(Collectors.toMap(i -> i, i -> 1L, Long::sum, TreeMap::new));
-
-        return letterFrequency;
+        return lines.flatMap(this::words)
+                .filter(w -> w.length() >= minWordLength)
+                .map(String::toLowerCase)
+                .flatMapToInt(String::chars)
+                .mapToObj(i -> String.valueOf((char) i))
+                .collect(Collectors.toMap(i -> i, i -> 1L, Long::sum, TreeMap::new));
     }
 
     private Stream<String> words(String line) {

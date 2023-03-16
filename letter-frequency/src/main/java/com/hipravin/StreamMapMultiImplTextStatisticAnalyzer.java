@@ -31,14 +31,12 @@ public class StreamMapMultiImplTextStatisticAnalyzer implements TextStatisticAna
     }
 
     private Map<String, Long> letterFrequency(Stream<String> lines, int minWordLength) {
-        Map<String, Long> letterFrequency = lines.mapMulti(this::splitWordsAndAcceptAll)
+        return lines.mapMulti(this::splitWordsAndAcceptAll)
                 .filter(w -> w.length() >= minWordLength)
                 .map(String::toLowerCase)
                 .mapMultiToInt(this::splitCharsAndAcceptAll)
                 .mapToObj(i -> String.valueOf((char) i))
                 .collect(Collectors.toMap(i -> i, i -> 1L, Long::sum, TreeMap::new));
-
-        return letterFrequency;
     }
 
     private void splitWordsAndAcceptAll(String line, Consumer<String> wordConsumer) {
