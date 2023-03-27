@@ -12,6 +12,7 @@
         <module>file-lines</module>
         <module>misc-examples</module>
         <module>letter-frequency</module>
+        <module>spring-data-stream</module>
     </modules>
 
     <properties>
@@ -20,6 +21,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <spring-boot.version>2.7.9</spring-boot.version>
         <jmh.version>1.36</jmh.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <guava.version>31.1-jre</guava.version>
