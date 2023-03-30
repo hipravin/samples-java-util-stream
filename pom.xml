@@ -13,6 +13,7 @@
         <module>misc-examples</module>
         <module>letter-frequency</module>
         <module>spring-data-stream</module>
+        <module>postal-codes-autocomplete</module>
     </modules>
 
     <properties>
