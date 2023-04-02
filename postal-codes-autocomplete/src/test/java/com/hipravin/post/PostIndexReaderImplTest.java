@@ -1,5 +1,6 @@
 package com.hipravin.post;
 
+import com.linuxense.javadbf.DBFException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -39,6 +40,22 @@ class PostIndexReaderImplTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
             postIndexreaderImpl.readAllStreamNaive().count();
+        });
+    }
+
+    @Test
+    void testGenerateLooksFineAtFirstGlance() {
+        PostIndexReaderImpl postIndexreaderImpl = (PostIndexReaderImpl) postIndexReader;
+        List<PostIndex> indices = postIndexreaderImpl.readAllStreamHackingGenerate().toList();
+        assertEquals(58444, indices.size());
+    }
+
+    @Test
+    void testGenerateIsActuallyBroken() {
+        PostIndexReaderImpl postIndexreaderImpl = (PostIndexReaderImpl) postIndexReader;
+        assertThrows(DBFException.class, () -> {
+            postIndexreaderImpl.readAllStreamHackingGenerate()
+                    .parallel().toList();
         });
     }
 

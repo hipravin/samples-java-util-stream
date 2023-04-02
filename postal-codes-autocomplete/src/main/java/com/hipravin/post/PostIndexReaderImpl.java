@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -27,13 +28,13 @@ public class PostIndexReaderImpl implements PostIndexReader {
             BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(indexFilePath));
             DBFReader reader = new DBFReader(bis);
 
-            Iterator<PostIndex> postIndexIterator = new ReadAheadPostIndexIterator(reader);
-
+            var postIndexFileStructure = PostIndexDbfFileStructure.fromReader(reader);
+            Iterator<Object[]> postIndexIterator = new DbfReaderRecordIterator(reader);
             return StreamSupport.stream(
-                    Spliterators.spliteratorUnknownSize(postIndexIterator, 0), false)
+                            Spliterators.spliteratorUnknownSize(postIndexIterator, 0), false)
+                    .map(r -> postIndexFileStructure.rawRecordToPostIndex(r))
                     .onClose(() -> closeQuietly(bis))
                     .onClose(() -> closeQuietly(reader));
-
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -43,21 +44,40 @@ public class PostIndexReaderImpl implements PostIndexReader {
      * Incorrect implementation that close resources with help of try-with-resources block.
      * It throws an exception once client tries to run terminal operation on stream, because then
      * already closed DBFReader tries to read from InputStream that is also already closed.
-     *
+     * <p>
      * {@code readAll} provides correct implementation with usage of {@code Stream.onClose} method.
      */
     public Stream<PostIndex> readAllStreamNaive() {
         try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(indexFilePath));
              DBFReader reader = new DBFReader(bis)) {
 
-            Iterator<PostIndex> postIndexIterator = new ReadAheadPostIndexIterator(reader);
+            var postIndexFileStructure = PostIndexDbfFileStructure.fromReader(reader);
+            Iterator<Object[]> postIndexIterator = new DbfReaderRecordIterator(reader);
             return StreamSupport.stream(
-                            Spliterators.spliteratorUnknownSize(postIndexIterator, 0), false);
+                            Spliterators.spliteratorUnknownSize(postIndexIterator, 0), false)
+                    .map(r -> postIndexFileStructure.rawRecordToPostIndex(r));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
+    //looks good, but subtly incorrect. Supplier should be stateless
+    public Stream<PostIndex> readAllStreamHackingGenerate() {
+        try {
+            BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(indexFilePath));
+            DBFReader reader = new DBFReader(bis);
+
+            var postIndexFileStructure = PostIndexDbfFileStructure.fromReader(reader);
+
+            return Stream.generate(() -> reader.nextRecord())
+                    .takeWhile(r -> r != null)
+                    .map(r -> postIndexFileStructure.rawRecordToPostIndex(r))
+                    .onClose(() -> closeQuietly(bis))
+                    .onClose(() -> closeQuietly(reader));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 
     @Override
     public List<PostIndex> readAllList() {
@@ -79,7 +99,7 @@ public class PostIndexReaderImpl implements PostIndexReader {
     }
 
     @Override
-    public void readAll(Consumer<? super PostIndex> handler) {
+    public void readAll(Predicate<? super PostIndex> acceptPostIndex, Consumer<? super PostIndex> handler) {
         try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(indexFilePath));
              DBFReader reader = new DBFReader(bis)) {
 
@@ -87,12 +107,16 @@ public class PostIndexReaderImpl implements PostIndexReader {
 
             Object[] rowObjects;
             while ((rowObjects = reader.nextRecord()) != null) {
-                handler.accept(postIndexFileStructure.rawRecordToPostIndex(rowObjects));
+                PostIndex postIndex = postIndexFileStructure.rawRecordToPostIndex(rowObjects);
+                if (acceptPostIndex.test(postIndex)) {
+                    handler.accept(postIndex);
+                }
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
+
 
     record PostIndexDbfFileStructure(
             Map<String, Integer> fieldsByName) {
@@ -146,42 +170,35 @@ public class PostIndexReaderImpl implements PostIndexReader {
         }
     }
 
-    static class ReadAheadPostIndexIterator implements Iterator<PostIndex> {
+    static class DbfReaderRecordIterator implements Iterator<Object[]> {
         private final DBFReader reader;
-        private final PostIndexDbfFileStructure postIndexDbfFileStructure;
-        private PostIndex next;
+        private Object[] nextRecord;
 
-        public ReadAheadPostIndexIterator(DBFReader reader) {
+        public DbfReaderRecordIterator(DBFReader reader) {
             this.reader = reader;
-            this.postIndexDbfFileStructure = PostIndexDbfFileStructure.fromReader(reader);
-            this.next = readNext();
+            readNextRecord();
         }
 
         @Override
         public boolean hasNext() {
-            return next != null;
+            return nextRecord != null;
         }
 
         @Override
-        public PostIndex next() {
-            PostIndex postIndex = next;
-            next = readNext();
-            return postIndex;
+        public Object[] next() {
+            Object[] currentRecord = nextRecord;
+            readNextRecord();
+            return currentRecord;
         }
 
-        private PostIndex readNext() {
-            Object[] rowObjects = reader.nextRecord();
-            if(rowObjects == null) {
-                return null;
-            } else {
-                return postIndexDbfFileStructure.rawRecordToPostIndex(rowObjects);
-            }
+        void readNextRecord() {
+            this.nextRecord = reader.nextRecord();
         }
     }
 
     static void closeQuietly(Closeable c) {
         try {
-            if(c != null) {
+            if (c != null) {
                 c.close();
             }
         } catch (RuntimeException | IOException e) {
