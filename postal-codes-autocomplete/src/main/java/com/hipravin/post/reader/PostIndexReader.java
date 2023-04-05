@@ -1,4 +1,6 @@
-package com.hipravin.post;
+package com.hipravin.post.reader;
+
+import com.hipravin.post.PostIndex;
 
 import java.util.List;
 import java.util.function.Consumer;
