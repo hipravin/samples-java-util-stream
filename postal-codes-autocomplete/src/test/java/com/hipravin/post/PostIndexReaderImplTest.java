@@ -10,25 +10,30 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PostIndexReaderImplTest {
+    private static final int SAMPLE_INDICES_COUNT = 58444;
 
     static PostIndexReader postIndexReader;
     static PostIndexRepository postIndexRepository;
+
 
     @BeforeAll
     static void beforeAll() throws URISyntaxException {
         Path sampleFile = Path.of(ClassLoader.getSystemResource("data/PIndx05.dbf").toURI());
         postIndexReader = new PostIndexReaderImpl(sampleFile);
-        postIndexRepository = new PostIndexInMemoryRepository(postIndexReader.readAllList());
+        try(Stream<PostIndex> postIndices = postIndexReader.readAll()) {
+            postIndexRepository = new PostIndexInMemoryRepository(postIndices.toList());
+        }
     }
 
     @Test
     void readAllSample() {
         List<PostIndex> postIndices = postIndexReader.readAllList();
-        assertEquals(58444, postIndices.size());
+        assertEquals(SAMPLE_INDICES_COUNT, postIndices.size());
     }
 
     @Test
@@ -51,29 +56,49 @@ class PostIndexReaderImplTest {
     @Test
     void testReadAllStreamSample() {
         List<PostIndex> postIndices = postIndexReader.readAll().toList();
-        assertEquals(58444, postIndices.size());
+        assertEquals(SAMPLE_INDICES_COUNT, postIndices.size());
+    }
+
+    @Test
+    void testReadAllProperClose() {
+        try(Stream<PostIndex> postIndexStream = postIndexReader.readAll()) {
+            long postIndicesCount = postIndexStream.count();
+            assertEquals(SAMPLE_INDICES_COUNT, postIndicesCount);
+        }
     }
 
     @Test
     void testReadAllParallelStreamSample() {
-        List<PostIndex> postIndices = postIndexReader.readAll().parallel()
-                .toList();
-        assertEquals(58444, postIndices.size());
+        try(Stream<PostIndex> postIndexStream = postIndexReader.readAll()) {
+            List<PostIndex> postIndices = postIndexStream.parallel().toList();
+            assertEquals(SAMPLE_INDICES_COUNT, postIndices.size());
+        }
     }
 
     @Test
     void testReadAllStreamSpliteratorSample() {
         PostIndexReaderImpl postIndexReaderImpl = (PostIndexReaderImpl) postIndexReader;
-        List<PostIndex> postIndices = postIndexReaderImpl.readAllStreamSpliterator().toList();
-        assertEquals(58444, postIndices.size());
+        try(Stream<PostIndex> postIndexStream = postIndexReaderImpl.readAllStreamSpliterator()) {
+            List<PostIndex> postIndices = postIndexStream.toList();
+            assertEquals(SAMPLE_INDICES_COUNT, postIndices.size());
+        }
+    }
+
+    @Test
+    void testReadAllStreamSpliteratorSampleCount() {
+        PostIndexReaderImpl postIndexReaderImpl = (PostIndexReaderImpl) postIndexReader;
+        try(Stream<PostIndex> postIndexStream = postIndexReaderImpl.readAllStreamSpliterator()) {
+            assertEquals(SAMPLE_INDICES_COUNT, postIndexStream.count());
+        }
     }
 
     @Test
     void testReadAllParallelStreamSpliteratorSample() {
         PostIndexReaderImpl postIndexReaderImpl = (PostIndexReaderImpl) postIndexReader;
-        List<PostIndex> postIndices = postIndexReaderImpl.readAllStreamSpliterator().parallel()
-                .toList();
-        assertEquals(58444, postIndices.size());
+        try(Stream<PostIndex> postIndexStream = postIndexReaderImpl.readAllStreamSpliterator()) {
+            List<PostIndex> postIndices = postIndexStream.parallel().toList();
+            assertEquals(SAMPLE_INDICES_COUNT, postIndices.size());
+        }
     }
 
     @Test
@@ -89,7 +114,7 @@ class PostIndexReaderImplTest {
     void testGenerateLooksFineAtFirstGlance() {
         PostIndexReaderImpl postIndexReaderImpl = (PostIndexReaderImpl) postIndexReader;
         List<PostIndex> indices = postIndexReaderImpl.readAllStreamHackingGenerate().toList();
-        assertEquals(58444, indices.size());
+        assertEquals(SAMPLE_INDICES_COUNT, indices.size());
     }
 
     @Test
