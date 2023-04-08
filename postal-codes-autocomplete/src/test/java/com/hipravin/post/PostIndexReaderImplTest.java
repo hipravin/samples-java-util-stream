@@ -19,6 +19,7 @@ class PostIndexReaderImplTest {
 
     static PostIndexReader postIndexReader;
     static PostIndexRepository postIndexRepository;
+    static PostIndexRepository postIndexRepositoryListImpl;
 
 
     @BeforeAll
@@ -26,7 +27,10 @@ class PostIndexReaderImplTest {
         Path sampleFile = Path.of(ClassLoader.getSystemResource("data/PIndx05.dbf").toURI());
         postIndexReader = new PostIndexReaderImpl(sampleFile);
         try(Stream<PostIndex> postIndices = postIndexReader.readAll()) {
-            postIndexRepository = new PostIndexInMemoryRepository(postIndices.toList());
+            postIndexRepository = PostIndexInMemoryRepository.fromStream(postIndices);
+        }
+        try(Stream<PostIndex> postIndices = postIndexReader.readAll()) {
+            postIndexRepositoryListImpl = PostIndexInMemoryRepositoryListImpl.fromStream(postIndices);
         }
     }
 
@@ -137,7 +141,35 @@ class PostIndexReaderImplTest {
         String prefix = "215";
         List<PostIndex> indices = postIndexRepository.findByIndexStartingWith("215", 10);
         indices.forEach(i -> {
+            System.out.println(i);
             assertTrue(i.index().startsWith(prefix));
         });
+    }
+
+    @Test
+    void testRepositoryFind10ListImpl() {
+        String prefix = "215";
+        List<PostIndex> indices = postIndexRepositoryListImpl.findByIndexStartingWith("215", 10);
+        indices.forEach(i -> {
+            System.out.println(i);
+            assertTrue(i.index().startsWith(prefix));
+        });
+    }
+
+    @Test
+    void testFind10Same() {
+        List<PostIndex> indicesMapImpl = postIndexRepository.findByIndexStartingWith("215", 10);
+        List<PostIndex> indicesListImpl = postIndexRepositoryListImpl.findByIndexStartingWith("215", 10);
+
+        assertEquals(indicesMapImpl, indicesListImpl);
+    }
+
+    @Test
+    void testFind1Same() {
+        List<PostIndex> indicesMapImpl = postIndexRepository.findByIndexStartingWith("215002", 10);
+        List<PostIndex> indicesListImpl = postIndexRepositoryListImpl.findByIndexStartingWith("215002", 10);
+
+        assertEquals(indicesMapImpl, indicesListImpl);
+        assertEquals(1, indicesMapImpl.size());
     }
 }
