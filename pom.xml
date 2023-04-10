@@ -12,7 +12,6 @@
         <module>file-lines</module>
         <module>misc-examples</module>
         <module>letter-frequency</module>
-        <module>spring-data-stream</module>
         <module>postal-codes-autocomplete</module>
     </modules>
 
@@ -26,6 +25,7 @@
         <jmh.version>1.36</jmh.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <guava.version>31.1-jre</guava.version>
+        <hsqldb.version>2.7.1</hsqldb.version>
     </properties>
 
     <dependencyManagement>
@@ -45,6 +45,13 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>

@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: post-data-service
+
+  datasource:
+    url: ${REPO_DB_URL}
+    username: ${REPO_DB_USER}
+    password: ${REPO_DB_PASSWORD}
+
+  jpa:
+    properties:
+      hibernate:
+        default_schema: "post"
+        order_inserts: true
+        order_updates: true
+        generate_statistics: true
+        jdbc:
+          batch_size: 100
+          time_zone: UTC
+
+logging:
+  level:
+    com.hipravin: DEBUG
+    org.hibernate.SQL: DEBUG
+    #    org.hibernate.type.descriptor.sql: TRACE
+
+    org.springframework: INFO
+
+
+application:
+  post-index-file-path: postal-codes-autocomplete/src/main/resources/data/PIndx05.dbf
+  runners:
+    loadindices:
+      enabled: true
+
+REPO_DB_URL: jdbc:postgresql://host.docker.internal:5432/playground
+REPO_DB_USER: postgres
+REPO_DB_PASSWORD: admin

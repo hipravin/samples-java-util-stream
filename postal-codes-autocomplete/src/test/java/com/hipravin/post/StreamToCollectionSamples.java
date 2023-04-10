@@ -201,4 +201,22 @@ public class StreamToCollectionSamples {
         System.out.println(indicesSet.getClass());
         assertEquals(SAMPLE_INDICES_COUNT, indicesSet.size());
     }
+
+    @Test
+    void testFindLongestString() {
+
+        String longest = indicesStream.flatMap(pi -> Stream.of(
+                        pi.index(),
+                        pi.name(),
+                        pi.region(),
+                        pi.area(),
+                        pi.autonom(),
+                        pi.city(),
+                        pi.city1()))
+                .max(Comparator.comparing(s -> s.length()))
+                .orElseThrow();
+
+        System.out.println(longest);
+        System.out.println(longest.length());
+    }
 }

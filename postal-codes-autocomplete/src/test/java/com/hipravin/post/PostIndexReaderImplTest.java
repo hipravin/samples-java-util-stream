@@ -172,4 +172,21 @@ class PostIndexReaderImplTest {
         assertEquals(indicesMapImpl, indicesListImpl);
         assertEquals(1, indicesMapImpl.size());
     }
+
+    @Test
+    void testFindNotFound() {
+        List<PostIndex> indicesMapImpl = postIndexRepository.findByIndexStartingWith("000000", 10);
+        List<PostIndex> indicesListImpl = postIndexRepositoryListImpl.findByIndexStartingWith("000000", 10);
+
+        assertEquals(indicesMapImpl, indicesListImpl);
+        assertEquals(0, indicesMapImpl.size());
+    }
+    @Test
+    void testFindNotFoundMiddle() {
+        List<PostIndex> indicesMapImpl = postIndexRepository.findByIndexStartingWith("2000000000", 10);
+        List<PostIndex> indicesListImpl = postIndexRepositoryListImpl.findByIndexStartingWith("2000000000", 10);
+
+        assertEquals(indicesMapImpl, indicesListImpl);
+        assertEquals(0, indicesMapImpl.size());
+    }
 }
