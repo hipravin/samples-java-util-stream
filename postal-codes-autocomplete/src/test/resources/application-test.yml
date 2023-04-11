@@ -20,14 +20,14 @@ spring:
 
 logging:
   level:
-    com.hipravin: DEBUG
-    org.hibernate.SQL: DEBUG
+#    com.hipravin: DEBUG
+#    org.hibernate.SQL: DEBUG
     #    org.hibernate.type.descriptor.sql: TRACE
 
     org.springframework: INFO
 
 application:
-  post-index-file-path: postal-codes-autocomplete/src/main/resources/data/PIndx05.dbf
+  post-index-file-path: src/main/resources/data/PIndx05.dbf
   runners:
     loadindices:
       enabled: true

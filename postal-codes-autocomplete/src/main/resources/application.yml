@@ -13,7 +13,7 @@ spring:
         default_schema: "post"
         order_inserts: true
         order_updates: true
-        generate_statistics: true
+#        generate_statistics: true
         jdbc:
           batch_size: 100
           time_zone: UTC
@@ -21,7 +21,7 @@ spring:
 logging:
   level:
     com.hipravin: DEBUG
-    org.hibernate.SQL: DEBUG
+#    org.hibernate.SQL: DEBUG
     #    org.hibernate.type.descriptor.sql: TRACE
 
     org.springframework: INFO
@@ -31,6 +31,9 @@ application:
   post-index-file-path: postal-codes-autocomplete/src/main/resources/data/PIndx05.dbf
   runners:
     loadindices:
+      enabled: false
+#      enabled: true
+    loadtest:
       enabled: true
 
 REPO_DB_URL: jdbc:postgresql://host.docker.internal:5432/playground
