@@ -1,6 +1,10 @@
+server:
+  port: 8280
+
 spring:
   application:
     name: post-data-service
+
 
   datasource:
     url: ${REPO_DB_URL}
@@ -34,7 +38,8 @@ application:
       enabled: false
 #      enabled: true
     loadtest:
-      enabled: true
+      enabled: false
+#      enabled: true
 
 REPO_DB_URL: jdbc:postgresql://host.docker.internal:5432/playground
 REPO_DB_USER: postgres
