@@ -29,4 +29,12 @@ public class TestSearchService {
         //simulate no terminal operation -> no close called even with decorator
         return List.of();
     }
+
+    @Transactional
+    public List<PostIndexEntity> searchTerminalNoCloseException(String indexPrefix) {
+        //simulate exception on intermediate operation
+        return postIndexJpaRepository.findByIndexStartingWith(indexPrefix, PageRequest.of(0, 10))
+//                .peek(e -> {throw new RuntimeException(" on purpose");})
+                .toList();
+    }
 }

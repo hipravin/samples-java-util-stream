@@ -7,4 +7,4 @@ GET http://localhost:8280/api/v1/post/db/index/search?q=1&lmt=100
 
 
 ###
-GET http://localhost:8280/api/v1/post/db/index/search?q=000&lmt=100
+GET http://localhost:8280/api/v1/post/db/index/search?q=0&lmt=100

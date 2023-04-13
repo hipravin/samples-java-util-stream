@@ -30,4 +30,15 @@ public class PostServiceDbImpl implements PostService {
                     .toList();
         }
     }
+
+//    @Override
+    public List<PostIndexDto> searchIndexStartingWithListImpl(String indexPrefix, int limit) {
+        return postIndexJpaRepository.findByIndexStartingWithListImpl(
+                        indexPrefix, PageRequest.of(0, limit))
+                .stream()
+                .map(DtoMappers::fromEntity)
+                .toList();
+    }
+
+
 }
