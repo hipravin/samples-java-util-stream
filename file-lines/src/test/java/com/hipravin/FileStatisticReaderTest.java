@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileStatisticReaderTest {
     static Path sampleTiny = Paths.get("src/main/resources/sample-tiny.txt");
-    static Path sampleMiddle = Paths.get("src/main/resources/sample-middle.txt");
+    static Path sampleMiddle = Paths.get("src/main/resources/sample-medium.txt");
 
     static FileStatisticReader fileLines = new FileLines();
     static FileStatisticReader fileLinesWithoutProperClose = new FileLinesWithoutProperClose();
@@ -41,7 +41,7 @@ class FileStatisticReaderTest {
 
     @Test
     void testCorrectMiddle() {
-        long expected = 1000;
+        long expected = 400;
         Path path = sampleMiddle;
 
         assertEquals(expected, fileLines.countLines(path));

@@ -10,7 +10,10 @@ public class FileLinesReadAllLines implements FileStatisticReader{
     @Override
     public long countLines(Path path) {
         try {
-            return Files.readAllLines(path, StandardCharsets.UTF_8).size();
+            return Files.readAllLines(path, StandardCharsets.UTF_8)
+                    .stream()
+                    .filter(s -> !s.isBlank())
+                    .count();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

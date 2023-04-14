@@ -11,7 +11,7 @@ public class FileLines implements FileStatisticReader {
     @Override
     public long countLines(Path path) {
         try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {
-            return lines.count();
+            return lines.filter(s -> !s.isBlank()).count();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

@@ -10,6 +10,8 @@ spring:
     url: ${REPO_DB_URL}
     username: ${REPO_DB_USER}
     password: ${REPO_DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
 
   jpa:
     properties:
@@ -21,7 +23,6 @@ spring:
         jdbc:
           batch_size: 100
           time_zone: UTC
-
 logging:
   level:
     com.hipravin: DEBUG

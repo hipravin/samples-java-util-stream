@@ -28,14 +28,26 @@ public class LoadTestingRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         //trying to get either error or slowdown when Stream instance is not properly closed
         //but everything works fine so far
+        int iterations = 10_000;
         log.info("Load test - started...");
 
-        for (int i = 0; i < 10_000; i++) {
-            testSearchService.search("10").stream().findFirst().ifPresent(p -> {});
+        for (int i = 0; i < iterations; i++) {
+            testSearchService.search("10").stream().findFirst().ifPresent(p -> {
+            });
         }
-        log.info("Load test - starting no close");
-        for (int i = 0; i < 10_000; i++) {
-            testSearchService.searchNoTerminalNoClose("10").stream().findFirst().ifPresent(p ->{});
+        log.info("Load test - starting no close no terminal");
+        for (int i = 0; i < iterations; i++) {
+            testSearchService.searchNoTerminalNoClose("10").stream().findFirst().ifPresent(p -> {
+            });
+        }
+        log.info("Load test - starting no close exception");
+        for (int i = 0; i < iterations; i++) {
+            try {
+                testSearchService.searchTerminalNoCloseException("10").stream().findFirst().ifPresent(p -> {
+                });
+            } catch (RuntimeException e) {
+                //no op
+            }
         }
         log.info("Load test - finished");
     }

@@ -18,7 +18,7 @@ public class BenchmarkConfig {
     @State(Scope.Benchmark)
     public static class ExecutionPlan {
 
-        @Param({ "sample-tiny.txt", "sample-middle.txt"})
+        @Param({"sample-tiny.txt", "sample-medium.txt", "sample-large.txt"})
         public String fileName;
 
         public Path filePath;
@@ -26,7 +26,7 @@ public class BenchmarkConfig {
         @Setup(Level.Invocation)
         public void setUp() {
             filePath = resourcesPath.resolve(fileName);
-            if(!Files.isRegularFile(filePath)) {
+            if (!Files.isRegularFile(filePath)) {
                 throw new IllegalStateException("File is not a regular file: " + filePath);
             }
         }
