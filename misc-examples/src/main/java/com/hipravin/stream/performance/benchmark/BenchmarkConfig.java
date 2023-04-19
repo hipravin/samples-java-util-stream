@@ -6,6 +6,7 @@ import static com.hipravin.stream.performance.Sum.*;
 
 public class BenchmarkConfig {
     private static final long sumToInclusive = 100_000_000;
+
     @State(Scope.Benchmark)
     public static class ExecutionPlan {
 
@@ -19,6 +20,9 @@ public class BenchmarkConfig {
             assertEquals(expected, sumBoxedStream(sumToInclusive));
             assertEquals(expected, sumPrimitiveFlatMap(sumToInclusive));
             assertEquals(expected, sumPrimitiveMapMulti(sumToInclusive));
+            assertEquals(expected, sumBoxedStreamParallel(sumToInclusive));
+            assertEquals(expected, sumPrimitiveStreamParallel(sumToInclusive));
+            assertEquals(expected, sumPrimitiveFlatMapParallel(sumToInclusive));
             assertEquals(sumPrimitiveCycleWithIf(sumToInclusive), sumPrimitiveStreamWithFilter(sumToInclusive));
         }
     }
@@ -26,6 +30,11 @@ public class BenchmarkConfig {
     @Benchmark
     public long bench_sumPrimitiveStream() {
         return sumPrimitiveStream(sumToInclusive);
+    }
+
+    @Benchmark
+    public long bench_sumPrimitiveParallelStream() {
+        return sumPrimitiveStreamParallel(sumToInclusive);
     }
 
     @Benchmark
@@ -49,6 +58,11 @@ public class BenchmarkConfig {
     }
 
     @Benchmark
+    public long bench_sumBoxedParallel() {
+        return sumBoxedStreamParallel(sumToInclusive);
+    }
+
+    @Benchmark
     public long bench_sumBigInteger() {
         return sumBigInteger(sumToInclusive);
     }
@@ -56,6 +70,11 @@ public class BenchmarkConfig {
     @Benchmark
     public long bench_sumPrimitiveFlatMap() {
         return sumPrimitiveFlatMap(sumToInclusive);
+    }
+
+    @Benchmark
+    public long bench_sumPrimitiveFlatMapParallel() {
+        return sumPrimitiveFlatMapParallel(sumToInclusive);
     }
 
     @Benchmark
@@ -74,8 +93,8 @@ public class BenchmarkConfig {
     }
 
     static void assertEquals(long l1, long l2) {
-        if(l1 != l2) {
-            throw new IllegalStateException("different: " + l1 + " != " + l2  );
+        if (l1 != l2) {
+            throw new IllegalStateException("different: " + l1 + " != " + l2);
         }
     }
 }

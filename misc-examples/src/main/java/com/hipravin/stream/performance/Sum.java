@@ -9,8 +9,18 @@ public class Sum {
         return LongStream.rangeClosed(0, sumToInclusive).sum();
     }
 
+    public static long sumPrimitiveStreamParallel(long sumToInclusive) {
+        return LongStream.rangeClosed(0, sumToInclusive).parallel().sum();
+    }
+
     public static long sumBoxedStream(long sumToInclusive) {
         return LongStream.rangeClosed(0, sumToInclusive).boxed()
+                .reduce(0L, Long::sum);
+    }
+
+    public static long sumBoxedStreamParallel(long sumToInclusive) {
+        return LongStream.rangeClosed(0, sumToInclusive).boxed()
+                .parallel()
                 .reduce(0L, Long::sum);
     }
 
@@ -33,6 +43,13 @@ public class Sum {
     public static long sumPrimitiveFlatMap(long sumToInclusive) {
         return LongStream.rangeClosed(0, sumToInclusive)
                 .flatMap(l -> LongStream.of(l)) //useless operation to measure flatmap overhead
+                .sum();
+    }
+
+    public static long sumPrimitiveFlatMapParallel(long sumToInclusive) {
+        return LongStream.rangeClosed(0, sumToInclusive)
+                .flatMap(l -> LongStream.of(l)) //useless operation to measure flatmap overhead
+                .parallel()
                 .sum();
     }
 
