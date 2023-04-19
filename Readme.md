@@ -1,3 +1,5 @@
+Примеры к статье https://hipravin.github.io/java-util-stream-notes/
+
 Local setup: 
 
 1. Unzip postal-codes-autocomplete/src/main/resources/data/P_Indx_9740d3f330.zip to the same folder
