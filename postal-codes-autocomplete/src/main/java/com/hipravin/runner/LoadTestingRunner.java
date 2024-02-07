@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
         value = "application.runners.loadtest.enabled",
         havingValue = "true"
 )
-@Order(Runners.ORDER_LOAD_TEST)
+@Order(Runners.OOM_TEST)
 public class LoadTestingRunner implements ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(LoadTestingRunner.class);
 

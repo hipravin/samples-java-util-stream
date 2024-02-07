@@ -1,4 +1,4 @@
-set search_path to public,post;
+set search_path to post;
 
 drop extension pg_trgm;
 create extension pg_trgm with schema pg_catalog; -- \dx

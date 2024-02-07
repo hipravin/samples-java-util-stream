@@ -6,4 +6,5 @@ public final class Runners {
 
     public static final int ORDER_LOAD_POST_INDICES = 0;
     public static final int ORDER_LOAD_TEST = 100;
+    public static final int OOM_TEST = 200;
 }

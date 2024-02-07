@@ -6,6 +6,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.stream.Stream;
 
 @Repository
@@ -24,7 +25,7 @@ public class PostIndexDaoImpl implements PostIndexDao {
 
 
     @Override
-    public void saveAll(Stream<PostIndexEntity> postIndexEntityStream, long batchSize) {
+    public void saveAll(Stream<PostIndexEntity> postIndexEntityStream) {
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
 
         transactionTemplate.executeWithoutResult((ts) -> {
@@ -32,7 +33,12 @@ public class PostIndexDaoImpl implements PostIndexDao {
         });
     }
 
-    public void saveAllJpaRepo(Stream<PostIndexEntity> postIndexEntityStream, long batchSize) {
+    @Transactional
+    public void deleteAll() {
+        postIndexJpaRepository.deleteAll();
+    }
+
+    public void saveAllJpaRepo(Stream<PostIndexEntity> postIndexEntityStream) {
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
 
         transactionTemplate.executeWithoutResult((ts) -> {

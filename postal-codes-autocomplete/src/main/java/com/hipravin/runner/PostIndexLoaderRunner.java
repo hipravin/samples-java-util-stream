@@ -39,9 +39,10 @@ public class PostIndexLoaderRunner implements ApplicationRunner {
         log.info("Loading post indices to database - started...");
         try(Stream<PostIndex> postIndexStream = postIndexReader.readAll()) {
             Stream<PostIndexEntity> entityStream = postIndexStream.map(pi -> EntityMappers.from(pi));
-            postIndexDao.saveAll(entityStream, 0);
+            postIndexDao.deleteAll();
+            postIndexDao.saveAll(entityStream);
             //https://stackoverflow.com/questions/45635827/how-do-i-stop-spring-data-jpa-from-doing-a-select-before-a-save
-//            ((PostIndexDaoImpl)postIndexDao).saveAllJpaRepo(entityStream, 0); //much slower because of isNew
+//            ((PostIndexDaoImpl)postIndexDao).saveAllJpaRepo(entityStream); //much slower because of isNew
         } catch(RuntimeException e) {
             log.error("Failed to load post indices: {}", e.getMessage(), e);
             throw e;

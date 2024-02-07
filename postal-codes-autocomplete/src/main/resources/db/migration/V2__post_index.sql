@@ -10,8 +10,6 @@ CREATE TABLE POST_INDEX
     CONSTRAINT pi_idx_length CHECK (length(IDX) = 6)
 );
 
-SET search_path to public,post;
--- create extension pg_trgm with schema pg_catalog;;
 CREATE INDEX PI_INDEX_IDX ON POST_INDEX USING gin(IDX gin_trgm_ops);
 CREATE INDEX PI_NAME_IDX ON POST_INDEX USING gin(NAME gin_trgm_ops);
 CREATE INDEX PI_REGION_IDX ON POST_INDEX USING gin(REGION gin_trgm_ops);
