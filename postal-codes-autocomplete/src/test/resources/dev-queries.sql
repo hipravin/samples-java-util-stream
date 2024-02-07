@@ -1,5 +1,8 @@
 set search_path to public,post;
 
+drop extension pg_trgm;
+create extension pg_trgm with schema pg_catalog; -- \dx
+
 select count(*) from post_index;
 
 delete from post_index where 1=1;

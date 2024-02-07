@@ -42,6 +42,6 @@ application:
       enabled: false
 #      enabled: true
 
-REPO_DB_URL: jdbc:postgresql://host.docker.internal:5432/playground
+REPO_DB_URL: jdbc:postgresql://localhost:5432/playground
 REPO_DB_USER: postgres
 REPO_DB_PASSWORD: admin

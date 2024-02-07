@@ -11,7 +11,7 @@ CREATE TABLE POST_INDEX
 );
 
 SET search_path to public,post;
-CREATE EXTENSION if not exists pg_trgm;
+-- create extension pg_trgm with schema pg_catalog;;
 CREATE INDEX PI_INDEX_IDX ON POST_INDEX USING gin(IDX gin_trgm_ops);
 CREATE INDEX PI_NAME_IDX ON POST_INDEX USING gin(NAME gin_trgm_ops);
 CREATE INDEX PI_REGION_IDX ON POST_INDEX USING gin(REGION gin_trgm_ops);
